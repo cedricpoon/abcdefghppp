@@ -102,9 +102,9 @@ public class Solver {
 			return (one - two) + "";
 		else if (expression.contains("*"))
 			return (one * two) + "";
-		else if (expression.contains("/"))
+		else if (expression.contains("/") && two != 0)
 			return (one / two) + "";
-		return null;
+		return "";
 	}
 
 	public String solve() {
