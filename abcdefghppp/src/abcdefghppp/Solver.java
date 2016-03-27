@@ -115,7 +115,7 @@ public class Solver {
 		Struct.prepareChoices(choice, question);
 		backtrack.add(new Tracer(question.length(), null));
 
-		while (strIndex > -1) {
+		while (strIndex > -1 && strIndex < question.length()) {
 			char c = question.charAt(strIndex);
 			switch (c) {
 			case '+':
@@ -171,11 +171,14 @@ public class Solver {
 				break;
 			}
 		}
-		return question.substring(1);
+		if (strIndex == -1)
+			return question.substring(1);
+		else
+			return null;
 	}
 
 	public static void main(String[] args) {
-		Solver s = new Solver("ab-cd=ef+gh=ppp", new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+		Solver s = new Solver("ab-cd=ef+gh=ppp", new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 		System.out.println(s.solve());
 	}
 }
