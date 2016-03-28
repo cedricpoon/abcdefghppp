@@ -23,7 +23,7 @@ class Struct {
 	public static void prepareChoices(int[] pool, String question) {
 		boolean[] b = new boolean[pool.length];
 		for (int i = 0; i < pool.length; i++)
-			b[i] = (question.contains(pool[i] + "")) ? false : true;
+			b[i] = (question.contains(Integer.toString(pool[i], Solver.base) + "")) ? false : true;
 		choices.push(b);
 	}
 
@@ -38,7 +38,7 @@ class Struct {
 	public static Struct get(char symbol) {
 		if (isForwarding)
 			try {
-				Integer.parseInt(symbol + "");
+				Integer.parseInt(symbol + "", Solver.base);
 				return null;
 			} catch (Exception e) {
 			}
@@ -47,7 +47,7 @@ class Struct {
 
 	public static boolean create(char symbol) {
 		try {
-			Integer.parseInt(symbol + "");
+			Integer.parseInt(symbol + "", Solver.base);
 			return false;
 		} catch (Exception e) {
 		}
@@ -82,29 +82,35 @@ class Tracer {
 public class Solver {
 	private String question;
 	private int[] choice;
-	private final int BASE = 10;
+	public static int base = 10;
 
-	public Solver(String question, int[] choice) {
+	public Solver(String question, int base, int[] choice) {
 		super();
 		this.question = "=" + question;
 		this.choice = choice;
+		Solver.base = base;
 	}
 
 	private String evaluate(String expression) {
 		String[] ss = expression.split("[+\\-*/]");
 		if (ss.length == 1)
 			return ss[0];
-		int one = Integer.parseInt(ss[0]);
-		int two = Integer.parseInt(ss[1]);
-		if (expression.contains("+"))
-			return (one + two) + "";
-		else if (expression.contains("-"))
-			return (one - two) + "";
-		else if (expression.contains("*"))
-			return (one * two) + "";
-		else if (expression.contains("/") && two != 0)
-			return (one / two) + "";
-		return "";
+		int one = Integer.parseInt(ss[0], base);
+		int two = Integer.parseInt(ss[1], base);
+		int res = 0;
+		try {
+			if (expression.contains("+"))
+				res = one + two;
+			else if (expression.contains("-"))
+				res = one - two;
+			else if (expression.contains("*"))
+				res = one * two;
+			else if (expression.contains("/"))
+				res = one / two;
+			return Integer.toString(res, Solver.base) + "";
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 	public String solve() {
@@ -153,7 +159,7 @@ public class Solver {
 				Struct st = Struct.get(c);
 				if (Struct.hasChoice() || st == null) {
 					if (st != null) {
-						char next = Character.forDigit(choice[Struct.nextChoice()], BASE);
+						char next = Character.forDigit(choice[Struct.nextChoice()], base);
 						question = question.replace(c, next);
 						st.update(next);
 					}
@@ -178,7 +184,8 @@ public class Solver {
 	}
 
 	public static void main(String[] args) {
-		Solver s = new Solver("ab-cd=ef+gh=ppp", new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+		Solver s = new Solver("ghi-klm=opq+stu=wwww", 16,
+				new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf });
 		System.out.println(s.solve());
 	}
 }
